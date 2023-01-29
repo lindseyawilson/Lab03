@@ -138,14 +138,14 @@ message(born_US_count, " individuals in the the nobel_living_science dataset wer
 
     ## 105 individuals in the the nobel_living_science dataset were born in the US
 
-Finally, we can adapt the code. from Ex. 3 to split things up by whether
-or not the researcher was born in the US. When we do this, we get a
-different picture than when we graph based on where the researcher is
-based:
+### Exercise 5
+
+Finally, we can adapt the code. from Ex. 3 to see how many of the
+US/foreign based winners were born in the US vs. outside the US:
 
 ``` r
 ggplot(data = nobel_living_science,
-       mapping = aes(x = born_country_us,
+       mapping = aes(x = country_us,
                      fill = born_country_us)) + 
   geom_histogram(stat = "count") +
   coord_flip() +
@@ -157,21 +157,53 @@ ggplot(data = nobel_living_science,
 
 ![](lab-03_files/figure-gfm/US-born-plot-1.png)<!-- -->
 
-So it actually looks like being born in the US puts you at a slight
-disadvantage for winning the Nobel in every category except economics.
-Therefore, it looks like being *in* the US helps for winning a prize,
-but being *from* the US generally doesn’t. This supports the conclusions
-drawn by the Buzzfeed article, since the only way you could be based in
-the US but not from there is if you immigrated.
-
-### Exercise 4
-
-…
-
-### Exercise 5
-
-…
+This allows us to see that, while a majority of the US-based winners in
+the sciences were also US-born, a sizeable chunk were born outside the
+US. Therefore, it looks like being *in* the US helps for winning a
+prize, but being *from* the US isn’t as strong a predictor. This
+supports the conclusions drawn by the Buzzfeed article, since the only
+way you could be based in the US but not from there is if you
+immigrated.
 
 ### Exercise 6
 
-…
+So, where are those immigrant Nobel laureates from? The code below
+allows us to answer that question by filtering from
+`nobel_living_sciences` those winners who were based in the US at the
+time of their award but who were born outside of it. We can then
+generate a frequency plot that tells us the names and counts of the
+countries where these individuals were born:
+
+``` r
+born_country_counts <- nobel_living_science %>%
+  filter(country_us == "USA",
+         born_country_us == "Other") %>%
+  count(born_country, sort = TRUE)
+
+print(born_country_counts, n = 100)
+```
+
+    ## # A tibble: 21 × 2
+    ##    born_country       n
+    ##    <chr>          <int>
+    ##  1 Germany            7
+    ##  2 United Kingdom     7
+    ##  3 China              5
+    ##  4 Canada             4
+    ##  5 Japan              3
+    ##  6 Australia          2
+    ##  7 Israel             2
+    ##  8 Norway             2
+    ##  9 Austria            1
+    ## 10 Finland            1
+    ## 11 France             1
+    ## 12 Ireland            1
+    ## 13 Italy              1
+    ## 14 Lithuania          1
+    ## 15 Mexico             1
+    ## 16 Scotland           1
+    ## 17 South Africa       1
+    ## 18 Sweden             1
+    ## 19 Taiwan             1
+    ## 20 Turkey             1
+    ## 21 Ukraine            1
