@@ -52,7 +52,7 @@ message("the nobel_living dataset contains ", count, " observations")
 
 Now we want to visualize how likely US vs. non-US scientists are to win Nobel prizes in the sciences.
 To do this. we first have to add a variable to the `nobel_living` data frame called `country_us`.
-This variable takes the value of "USA" if the person is from the US, and "other" if not:
+This variable takes the value of "USA" if the person is from the US, and "Other" if not:
 
 ```{r mutate}
 nobel_living <- nobel_living %>%
@@ -63,7 +63,7 @@ nobel_living <- nobel_living %>%
 
 Next we have to make a new data frame called `nobel_living_science` that only considers prizes in physics, medicine, chemistry, and economics:
 
-```{r}
+```{r filter-science}
 nobel_living_science <- nobel_living %>%
   filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
 ```
@@ -71,7 +71,7 @@ nobel_living_science <- nobel_living %>%
 And finally, we can use this new data frame to make a visualization that compares the number of Nobel laureates from each science category that are US-based vs. non-US-based.
 From this we can see that US-based researchers are much more likely to win Nobel prizes, especially in economics.
 
-```{r}
+```{r US-based-plot}
 ggplot(data = nobel_living_science,
        mapping = aes(x = country_us,
                      fill = country_us)) + 
@@ -80,12 +80,44 @@ ggplot(data = nobel_living_science,
   facet_wrap( ~ category, ncol = 2)
 ```
 
-### Exercise 3
+### Exercise 4
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+So if being *based* in the US increases your chances of winning a Nobel prize in the sciences, does it matter whether or not you were *born* in the US?
+Let's find out.
+Just like last time, we start by adding a variable to `nobel_living_science` called `born_country_us`.
+This variable takes the value of "USA" if the researcher was born in the US and "Other" if not:
+
+```{r born-US}
+nobel_living_science <- nobel_living_science %>%
+  mutate(
+    born_country_us = if_else(born_country == "USA", "USA", "Other")
+    )
+```
+
+As a fun aside, we can count how many individuals in our modified dataset were born in the US:
+
+```{r born-US-count}
+born_US_count <- nobel_living_science %>%
+  filter(born_country_us == "USA") %>%
+  summarize(n())
+
+message(born_US_count, " individuals in the the nobel_living_science dataset were born in the US")
+```
+
+Finally, we can adapt the code. from Ex. 3 to split things up by whether or not the researcher was born in the US. When we do this, we get a different picture than when we graph based on where the researcher is based:
+
+```{r US-born-plot}
+ggplot(data = nobel_living_science,
+       mapping = aes(x = born_country_us,
+                     fill = born_country_us)) + 
+  geom_histogram(stat = "count") +
+  coord_flip() +
+  facet_wrap( ~ category, ncol = 2)
+```
+
+So it actually looks like being born in the US puts you at a slight disadvantage for winning the Nobel in every category except economics.
+Therefore, it looks like being *in* the US helps for winning a prize, but being *from* the US generally doesn't.
+This supports the conclusions drawn by the Buzzfeed article, since the only way you could be based in the US but not from there is if you immigrated.
 
 ### Exercise 4
 
