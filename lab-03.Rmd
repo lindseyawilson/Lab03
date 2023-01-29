@@ -1,7 +1,7 @@
 ---
 title: "Lab 03 - Nobel laureates"
-author: "Insert your name here"
-date: "Insert date here"
+author: Lindsey Wilson
+date: 01/26/2023
 output: github_document
 ---
 
@@ -19,11 +19,31 @@ nobel <- read_csv("data/nobel.csv")
 
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+The `nobel` dataset has 935 observations and 26 variables:
 
+```{r counts}
+# this gives the number of observations we have
+nobel %>%
+  summarize(n())
+
+#and this tells us the names/numbers of our variables
+names(nobel)
+```
+
+We want to filter this for living people.
+The code to do that is below.
+If we did this right, we. should have 228 observations:
+
+```{r}
+nobel_living <- nobel %>%
+  filter(!is.na(country),
+         gender != "org",
+         is.na(died_date)
+         )
+
+nobel_living %>%
+  summarize(n())
+```
 ### Exercise 2
 
 Remove this text, and add your answer for Exercise 1 here.
