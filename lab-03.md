@@ -45,8 +45,11 @@ names(nobel)
     ## [22] "born_city_original"    "died_country_original" "died_city_original"   
     ## [25] "city_original"         "country_original"
 
-We want to filter this for living people. The code to do that is below.
-If we did this right, we. should have 228 observations:
+### Exercise 2
+
+The code below creates a new data frame called `nobel_living` that
+filters the `nobel` dataset for living people. If we did this rght, we
+should be left with a 228 observations:
 
 ``` r
 nobel_living <- nobel %>%
@@ -55,20 +58,56 @@ nobel_living <- nobel %>%
          is.na(died_date)
          )
 
-nobel_living %>%
+count <- nobel_living %>%
   summarize(n())
+
+message("the nobel_living dataset contains ", count, " observations")
 ```
 
-    ## # A tibble: 1 × 1
-    ##   `n()`
-    ##   <int>
-    ## 1   228
+    ## the nobel_living dataset contains 228 observations
 
-### Exercise 2
+### Exercise 3
 
-Remove this text, and add your answer for Exercise 1 here. Add code
-chunks as needed. Don’t forget to label your code chunk. Do not use
-spaces in code chunk labels.
+Now we want to visualize how likely US vs. non-US scientists are to win
+Nobel prizes in the sciences. To do this. we first have to add a
+variable to the `nobel_living` data frame called `country_us`. This
+variable takes the value of “USA” if the person is from the US, and
+“other” if not:
+
+``` r
+nobel_living <- nobel_living %>%
+  mutate(
+    country_us = if_else(country == "USA", "USA", "Other")
+  )
+```
+
+Next we have to make a new data frame called `nobel_living_science` that
+only considers prizes in physics, medicine, chemistry, and economics:
+
+``` r
+nobel_living_science <- nobel_living %>%
+  filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
+```
+
+And finally, we can use this new data frame to make a visualization that
+compares the number of Nobel laureates from each science category that
+are US-based vs. non-US-based. From this we can see that US-based
+researchers are much more likely to win Nobel prizes, especially in
+economics.
+
+``` r
+ggplot(data = nobel_living_science,
+       mapping = aes(x = country_us,
+                     fill = country_us)) + 
+  geom_histogram(stat = "count") +
+  coord_flip() +
+  facet_wrap( ~ category, ncol = 2)
+```
+
+    ## Warning in geom_histogram(stat = "count"): Ignoring unknown parameters:
+    ## `binwidth`, `bins`, and `pad`
+
+![](lab-03_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ### Exercise 3
 
